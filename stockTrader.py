@@ -2,19 +2,22 @@ import random
 
 # Define classes and functions
 class Player:
-    def __init__(self, name, startingMoney, money, turnipStock, potatoStock, radishStock, goldRadishStock):
+    def __init__(self, name, startingMoney, money, lemonStock, orangeStock, pineappleStock, starfruitStock):
         self.name = name
         self.startingmoney = startingMoney
         self.money = money
-        self.turnipStock = turnipStock
-        self.potatoStock = potatoStock
-        self.radishStock = radishStock
-        self.goldRadishStock = goldRadishStock
+        self.lemonStock = lemonStock
+        self.orangeStock = orangeStock
+        self.pineappleStock = pineappleStock
+        self.starfruitStock = starfruitStock
 
 class Stock:
-    def __init__(self, name, startingPrice):
+    def __init__(self, name, startingPrice, price, shelfLife, age):
         self.name = name
         self.startingPrice = startingPrice
+        self.price = price
+        self.shelfLife = shelfLife
+        self.age = age
 
 def getStock(stock):
     print(stock.name + " price is: " + str(stock.startingPrice))
@@ -34,20 +37,31 @@ def purchaseStock(var):
                 if varContinue.lower() != "1":
                     break
             else:
-                print("You can't buy that many")
+                if answer != 0:
+                    print("You can't buy that many")
+                else:
+                    break
         except ValueError:
             print("Please enter a number")
+
+def priceChange(a):
+    a.price = int(a.price + ((random.randint(0,4) - 2) * (a.price/10)))
 
 
 
 # Define objects
-turnip = Stock("turnip", 5)
-potato = Stock("potato", 3)
-radish = Stock("radish", 10)
-goldRadish = Stock("gold radish", 80)
+lemon = Stock("lemon", 50, 50, 7, 0)
+orange = Stock("orange", 40, 40, 7, 0)
+pineapple = Stock("pineapple", 100, 100, 7, 0)
+starfruit = Stock("starfruit", 800, 800, 7, 0)
+
+priceChange(lemon)
+priceChange(orange)
+priceChange(pineapple)
+priceChange(starfruit)
 
 playername = input("What's your name?\n")
-player = Player(playername, 20, 20, 0, 0, 0, 0)
+player = Player(playername, 200, 200, 0, 0, 0, 0)
 
 # Define other variables
 varContinue2 = 1
@@ -58,13 +72,13 @@ print("\nYour name is "
       + "\nYou have ¥"
       + str(player.money)
       + "\n\n---SUNDAY---"
-      + "\n\nYour objeective is to make profit by trading vegetable stocks"
+      + "\n\nYour objective is to make profit by trading fruit stocks"
       + "\nYou can hold them for 7 days before they go off"
-      + "\n\nThese vegetables are on the market this week"
-      + "\n 1. Turnip: ¥5"
-      + "\n 2. Potato: ¥3"
-      + "\n 3. Radish: ¥10"
-      + "\n 4. Golden Raddish: ¥80"
+      + "\n\nThese fruit are on the market this week"
+      + "\n 1. Lemon: ¥" + str(lemon.price) + " - SL " + str(lemon.shelfLife)
+      + "\n 2. Orange: ¥" + str(orange.price) + " - SL " + str(orange.shelfLife)
+      + "\n 3. Pineapple: ¥" + str(pineapple.price) + " - SL " + str(pineapple.shelfLife)
+      + "\n 4. Starfruit: ¥" + str(starfruit.price) + " - SL " + str(starfruit.shelfLife) 
       )
 
 while varContinue2 == 1:
@@ -80,64 +94,31 @@ while varContinue2 == 1:
             print("Please enter a number")
 
     if answer == 1:
-        var = turnip
+        var = lemon
 
     if answer == 2:
-        var = potato
+        var = orange
 
     if answer == 3:
-        var = radish
+        var = pineapple
 
     if answer == 4:
-        var = goldRadish
+        var = starfruit
 
     #How many?
     purchaseStock(var)
 
     varContinue2 = int(input("\n\n1.Buy something else\n2.Continue\n"))
 
-print("\nThanks for playing! Final details:")
+print("\nDaily Stats:")
 print("\nYour name is " 
       + str(player.name) 
       + "\nYou have ¥"
       + str(player.money)
-      + "\nTurnip Stock: " + str(player.turnipStock)
-      + "\nPotato Stock: " + str(player.potatoStock)
-      + "\nRadish Stock: " + str(player.radishStock)
-      + "\nGold Radish Stock: " + str(player.goldRadishStock)
-      + "\n\nGoodbye!"
+      + "\n\nTurnip Stock: " + str(player.lemonStock) + " - ¥" + str(lemon.price) + " each"
+      + "\nPotato Stock: " + str(player.orangeStock) + " - ¥" + str(orange.price) + " each"
+      + "\nRadish Stock: " + str(player.pineappleStock) + " - ¥" + str(pineapple.price) + " each"
+      + "\nGold Radish Stock: " + str(player.starfruitStock) + " - ¥" + str(starfruit.price) + " each"
      )
 
-'''
-while True:
-    if answer <= 4:
-        try:
-            answer = int(input("\nHow Many?\n"))
-            if 1 <= answer <= (player.money/var.startingPrice):
-                var2 = answer
-                player.money -= answer*var.startingPrice
-                print("\nYou bought " + str(var2) + " turnips, for ¥" + str(answer*var.startingPrice))
-                print("You have ¥" + str(player.money) + " remaining")
-                break
-            else:
-                print("You can't afford that many")
-                break
-        except ValueError:
-            print("Pleae enter a number")
-'''
-
-
-'''
-while True:
-    if answer == 1:
-        try:
-            answer = int(input("Buy something else? \n"))
-            if 1 <= answer <= (player.money/turnip.startingPrice):
-                player.turnipStock = answer
-                player.money -= answer*turnip.startingPrice
-                break
-            else:
-                print("Please enter a number")
-        except ValueError:
-            print("You can't afford that many")
-'''
+#DAY 2
