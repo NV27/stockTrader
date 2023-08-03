@@ -2,7 +2,7 @@ import random
 
 # Define classes and functions
 class Player:
-    def __init__(self, name, startingMoney, money, lemonStock, orangeStock, pineappleStock, starfruitStock):
+    def __init__(self, name, startingMoney, money, lemonStock, orangeStock, pineappleStock, starfruitStock, income):
         self.name = name
         self.startingmoney = startingMoney
         self.money = money
@@ -10,7 +10,7 @@ class Player:
         self.orangeStock = orangeStock
         self.pineappleStock = pineappleStock
         self.starfruitStock = starfruitStock
-        #self.varStock = varStock
+        self.income = income
 
 class Stock:
     def __init__(self, name, startingPrice, price, shelfLife, age, sellPercent):
@@ -28,7 +28,11 @@ def purchaseStock(var):
     global player
     while True:
         try:
-            answer = int(input("\nHow Many " + var.name + "s would you like to buy?\n"))
+            answer = int(input("\nHow Many " + var.name + "s (¥" + str(var.price) + ") would you like to buy?\n"))
+            print( "\n\nLemon: ¥" + str(lemon.price)
+            + "\nOrange: ¥" + str(orange.price)
+            + "\nPineapple: ¥" + str(pineapple.price)
+            + "\nStarfruit: ¥" + str(starfruit.price))
             max_quantity = int(player.money / var.price)
             if 1 <= answer <= max_quantity:
                 player.money -= answer * var.price
@@ -62,6 +66,7 @@ def sellStock(var):
                 print("You now have ¥" + str(player.money) + " and " + str(varStock) + " " + str(var.name.lower()) + "s")
                 varContinue = input("\n1. Sell more " + var.name + "s \n2. Continue\n")
                 if varContinue.lower() != "1":
+
                     break
             else:
                 if answer != 0:
@@ -96,7 +101,7 @@ pineapple = Stock("pineapple", 100, 100, 7, 0, 0.9)
 starfruit = Stock("starfruit", 800, 800, 7, 0, 0.9)
 
 playername = input("What's your name?\n")
-player = Player(playername, 200, 200, 0, 0, 0, 0)
+player = Player(playername, 200, 200, 0, 0, 0, 0, 20)
 
 # Define other variables
 day = 1
@@ -115,7 +120,7 @@ while playing:
         + str(player.name) 
         + "\n\n--- DAY " + str(day) + " ---"
         + "\n\nYour objective is to make profit by trading fruit stocks"
-        + "\nYou can hold them for 7 days before they go off"
+        + "\nYou have a daily income of ¥20"
         + "\n\nYou have ¥"
         + str(player.money)
         + "\n\nThese fruit are on the market this week"
@@ -195,5 +200,6 @@ while playing:
 
     dailyStats()
     day += 1
+    player.money += player.income
 
 #DAY 2
