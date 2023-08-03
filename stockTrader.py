@@ -2,7 +2,7 @@ import random
 
 # Define classes and functions
 class Player:
-    def __init__(self, name, startingMoney, money, lemonStock, orangeStock, pineappleStock, starfruitStock, varStock):
+    def __init__(self, name, startingMoney, money, lemonStock, orangeStock, pineappleStock, starfruitStock):
         self.name = name
         self.startingmoney = startingMoney
         self.money = money
@@ -10,7 +10,7 @@ class Player:
         self.orangeStock = orangeStock
         self.pineappleStock = pineappleStock
         self.starfruitStock = starfruitStock
-        self.varStock = varStock
+        #self.varStock = varStock
 
 class Stock:
     def __init__(self, name, startingPrice, price, shelfLife, age, sellPercent):
@@ -46,7 +46,7 @@ def purchaseStock(var):
         except ValueError:
             print("Please enter a number")
 
-'''
+
 def sellStock(var):
     global player
     while True:
@@ -55,33 +55,11 @@ def sellStock(var):
             answer = int(input("\nYou have " + str(varStock) + " " + var.name + "s\nHow Many " + var.name + "s would you like to sell?\n"))
             max_quantity = int(varStock)
             if 1 <= answer <= varStock:
-                player.money +=  round(answer * var.price * var.sellPercent)
-                setattr(player, varStock, getattr(player, varStock) - answer)
-                print("\nYou sold " + str(answer) + " " + var.name + "s, for ¥" + str(answer * var.price * var.sellPercent))
-                print("You have ¥" + str(player.money) + " remaining")
-                varContinue = input("\n1. Sell more " + var.name + "s \n2. Continue\n")
-                if varContinue.lower() != "1":
-                    break
-            else:
-                if answer != 0:
-                    print("You don't have that many to sell!")
-                else:
-                    break
-        except ValueError:
-            print("Please enter a number")
-'''
-def sellStock(var):
-    global player
-    while True:
-        try:
-            player_stock_attribute = getattr(player, var.name.lower() + "Stock")
-            answer = int(input("\nYou have " + str(player_stock_attribute) + " " + var.name + "s\nHow Many " + var.name + "s would you like to sell?\n"))
-            max_quantity = int(player_stock_attribute)
-            if 1 <= answer <= player_stock_attribute:
                 player.money += round(answer * var.price * var.sellPercent)
+                varStock -= answer
                 setattr(player, var.name.lower() + "Stock", getattr(player, var.name.lower() + "Stock") - answer)
-                print("\nYou sold " + str(answer) + " " + var.name + "s, for ¥" + str(answer * var.price * var.sellPercent))
-                print("You now have ¥" + str(player.money) + " and " + str(player_stock_attribute) + " lemons")
+                print("\nYou sold " + str(answer) + " " + var.name + "s, for ¥" + str(round(answer * var.price * var.sellPercent)))
+                print("You now have ¥" + str(player.money) + " and " + str(varStock) + " " + str(var.name.lower()) + "s")
                 varContinue = input("\n1. Sell more " + var.name + "s \n2. Continue\n")
                 if varContinue.lower() != "1":
                     break
@@ -118,17 +96,16 @@ pineapple = Stock("pineapple", 100, 100, 7, 0, 0.9)
 starfruit = Stock("starfruit", 800, 800, 7, 0, 0.9)
 
 playername = input("What's your name?\n")
-player = Player(playername, 200, 200, 0, 0, 0, 0, 0)
+player = Player(playername, 200, 200, 0, 0, 0, 0)
 
 # Define other variables
-varContinue2 = 1
 day = 1
 playing = 1
 
 
 while playing:
     #Game
-
+    varContinue2 = 1
     priceChange(lemon)
     priceChange(orange)
     priceChange(pineapple)
@@ -142,21 +119,45 @@ while playing:
         + "\n\nYou have ¥"
         + str(player.money)
         + "\n\nThese fruit are on the market this week"
-        + "\n 1. Lemon: ¥" + str(lemon.price) + " ( " + str(player.lemonStock) + ")"
-        + "\n 2. Orange: ¥" + str(orange.price) + " ( " + str(player.orangeStock) + ")"
-        + "\n 3. Pineapple: ¥" + str(pineapple.price) + " ( " + str(player.pineappleStock) + ")"
-        + "\n 4. Starfruit: ¥" + str(starfruit.price) + " ( " + str(player.starfruitStock) + ")" 
+        + "\n 1. Lemon: ¥" + str(lemon.price) + " (" + str(player.lemonStock) + ")"
+        + "\n 2. Orange: ¥" + str(orange.price) + " (" + str(player.orangeStock) + ")"
+        + "\n 3. Pineapple: ¥" + str(pineapple.price) + " (" + str(player.pineappleStock) + ")"
+        + "\n 4. Starfruit: ¥" + str(starfruit.price) + " (" + str(player.starfruitStock) + ")" 
         )
 
 
     while True:
         try:
-            answer = int(input("\nWhat would you like to do\n 1.buy\n 2.sell\n"))
+            answer = int(input("\nWhat would you like to do\n 1.buy\n 2.sell\n 3.continue to next day\n"))
             if answer == 1:
                 break
             if answer == 2:
-                print("\nNeeds stuff here about what to sell")
-                sellStock(lemon)
+                #Which Stock?
+                while True:
+                    try:
+                        answer = int(input("What would you like to sell?\n"))
+                        if 1 <= answer <= 4:
+                            break
+                        else:
+                            print("Please enter a valid number (1-4)")
+                    except ValueError:
+                        print("Please enter a number")
+
+                if answer == 1:
+                    var = lemon
+
+                if answer == 2:
+                    var = orange
+
+                if answer == 3:
+                    var = pineapple
+
+                if answer == 4:
+                    var = starfruit
+                sellStock(var)
+            if answer == 3:
+                varContinue2 = 0
+                break
             else:
                 print("Please enter a number between 1 and 2")
         except ValueError:
