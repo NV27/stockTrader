@@ -2,7 +2,7 @@ import random
 
 # Define classes and functions
 class Player:
-    def __init__(self, name, startingMoney, money, lemonStock, orangeStock, pineappleStock, starfruitStock, income):
+    def __init__(self, name, startingMoney, money, lemonStock, orangeStock, pineappleStock, starfruitStock, income, rent, rentPrev):
         self.name = name
         self.startingmoney = startingMoney
         self.money = money
@@ -11,9 +11,11 @@ class Player:
         self.pineappleStock = pineappleStock
         self.starfruitStock = starfruitStock
         self.income = income
+        self.rent = rent
+        self.rentPrev = rentPrev
 
 class Stock:
-    def __init__(self, name, startingPrice, price, shelfLife, age, sellPercent, fruitYield):
+    def __init__(self, name, startingPrice, price, shelfLife, age, sellPercent, fruitYield, patternFunction):
         self.name = name
         self.startingPrice = startingPrice
         self.price = price
@@ -21,6 +23,7 @@ class Stock:
         self.age = age
         self.sellPercent = sellPercent
         self.fruitYield = fruitYield
+        self.patternFunction = patternFunction
 
 def getStock(stock):
     print(stock.name + " price is: " + str(stock.startingPrice))
@@ -117,16 +120,34 @@ def sellStock(var):
             print("Please enter a number")
 
 
-def priceChange(a):
-    a.price = int(a.price + ((random.randint(0,4) - 2) * (a.price/10)))
-    
-    #if a.name == lemon:
+def priceChange(stock):
+    stock.patternFunction(stock)
 
-    #if a.name == orange:
+def patternA(stock):
+    stock.price = int(stock.price + ((random.randint(0,4) - 2) * (stock.price/10)))
 
-    #if a.name == pineapple:
+def patternB(stock):
+    stock.price -= int(round((stock.price * random.randrange(0,3,1) * 0.01)))
 
-    #if a.name == starfruit:
+def patternC(stock):
+    stock.price += int(round((stock.price * random.randrange(0,3,1) * 0.01)))
+
+def patternD(stock):
+    stock.price += int(round(19 * random.randrange(0,3,1)))
+
+def patternE(stock):
+    if day % 7 != 4:
+        stock.price -= int(round((stock.price * random.randrange(0,3,1) * 0.01)))
+    else:
+        stock.price *= 2
+
+def patternF(stock):
+    if day % 7 == 4:
+        stock.price *= 2
+    if day % 7 == 6:
+        stock.price *= 2
+    else:
+        stock.price -= int(round((stock.price * random.randrange(0,3,1) * 0.02)))
     
 
 def dailyIntro():
@@ -135,21 +156,29 @@ def dailyIntro():
     priceChange(pineapple)
     priceChange(starfruit)
 
+    weekDay = weekDayArray[day%7]
+
     print("\nYour name is " 
-        + str(player.name) 
-        + "\n\n--- DAY " + str(day) + " ---"
+        + str(player.name)
+        + "\n\n--- Day " + str(day) + " - " + str(weekDay) +" ---"
         + "\n\nYour objective is to make profit by trading fruit stocks"
-        + "\nYou have a daily income of ¥20 plus a percentage value of any fruit you currently hold"
+        + "\nFruit follows a different price pattern each week"
+        + "\n\nYou make a daily income based on the value of any fruit you currently hold"
+        + "\nYour rent is currently $" + str(player.rent) + "/week, which you pay on Sundays"
         + "\nFruit has a 10% tax on sale"
         + "\n\nYou made ¥" + str(stockYield) + " from the fruit you hold!"
-        + "\nYou have ¥"
+        )
+    if day%7==0:
+        print("RENT DAY - You payed $" + str(player.rentPrev))
+    print("You have ¥"
         + str(player.money)
         + "\n\nNo. NAME  |  PRICE|HOLD|YIELD"
-        + "\n 1. Lemon:     ¥" + str(lemon.price) + "  (" + str(player.lemonStock) + ") [" + str(int(lemon.fruitYield*100)) + "%]"
-        + "\n 2. Orange:    ¥" + str(orange.price) + "  (" + str(player.orangeStock) + ") [" + str(int(orange.fruitYield*100)) + "%]"
-        + "\n 3. Pineapple: ¥" + str(pineapple.price) + " (" + str(player.pineappleStock) + ") [" + str(int(pineapple.fruitYield*100)) + "%]"
-        + "\n 4. Starfruit: ¥" + str(starfruit.price) + " (" + str(player.starfruitStock) + ") [" + str(int(starfruit.fruitYield*100)) + "%]"
+        + "\n 1. Lemon:     ¥" + str(lemon.price) + "  (" + str(player.lemonStock) + ") [" + str(int(lemon.fruitYield*100)) + "%] " #+ str(lemon.patternFunction)
+        + "\n 2. Orange:    ¥" + str(orange.price) + "  (" + str(player.orangeStock) + ") [" + str(int(orange.fruitYield*100)) + "%] " #+ str(orange.patternFunction)
+        + "\n 3. Pineapple: ¥" + str(pineapple.price) + " (" + str(player.pineappleStock) + ") [" + str(int(pineapple.fruitYield*100)) + "%] " #+ str(pineapple.patternFunction)
+        + "\n 4. Starfruit: ¥" + str(starfruit.price) + " (" + str(player.starfruitStock) + ") [" + str(int(starfruit.fruitYield*100)) + "%] " #+ str(starfruit.patternFunction)
         )
+    player.rentPrev = player.rent
 
 def dailyStats():
     print("\nDaily Stats:")
@@ -173,13 +202,17 @@ def calcStockYield():
 
 
 # Define objects and variables
-lemon = Stock("lemon", 50, 50, 7, 0, 0.9, 0.1)
-orange = Stock("orange", 40, 40, 7, 0, 0.9, 0.1)
-pineapple = Stock("pineapple", 200, 200, 7, 0, 0.9, 0.12)
-starfruit = Stock("starfruit", 800, 800, 7, 0, 0.9, 0.2)
+patternArray = [patternA,patternB,patternC,patternD,patternE,patternF]
+PAlength = len(patternArray)
+weekDayArray = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursdsay", "Friday", "Saturday"]
+
+lemon = Stock("lemon", 50, 50, 7, 0, 0.9, 0.1, patternArray[random.randint(0,PAlength-1)])
+orange = Stock("orange", 40, 40, 7, 0, 0.9, 0.1, patternArray[random.randint(0,PAlength-1)])
+pineapple = Stock("pineapple", 200, 200, 7, 0, 0.9, 0.12, patternArray[random.randint(0,PAlength-1)])
+starfruit = Stock("starfruit", 800, 800, 7, 0, 0.9, 0.2, patternArray[random.randint(0,PAlength-1)])
 
 playername = input("What's your name?\n")
-player = Player(playername, 200, 200, 0, 0, 0, 0, 20)
+player = Player(playername, 200, 200, 0, 0, 0, 0, 20, 100, 100)
 global varContinue2
 varContinue2 = 1
 global stockYield
@@ -193,6 +226,12 @@ playing = 1
 while playing:
     #Game
     varContinue2 = 1
+    if day % 7 == 0:
+        lemon.patternFunction = patternArray[random.randint(0,2)]
+        orange.patternFunction = patternArray[random.randint(0,2)]
+        pineapple.patternFunction = patternArray[random.randint(0,2)]
+        starfruit.patternFunction = patternArray[random.randint(0,2)]
+        #print("NEW PATTERNS")
     dailyIntro()
 
 ###
@@ -231,6 +270,19 @@ while playing:
     dailyStats()
     calcStockYield()
     day += 1
-    player.money += int(player.income + stockYield)
+    #player.money += int(player.income + stockYield)
+    player.money += int(stockYield)
+    if day%7==0:
+        player.money -= player.rent
+        player.rent += int(round(player.rent/5))
 
-#DAY 2
+    if player.money < 0:
+        print("\nAs Saturday night ticks over to Sunday"
+              + "\nYou feel your weekly rent magically ripped from your pocket"
+              + "\nWith it comes your soul"
+              + "\nYou are Broke"
+              + "\nYou are Dead"
+              + "\nThanks for playing!"
+              +"\n\nYOU SURVIVED FOR " + str(day) + " DAYS\n"
+              )
+        playing = 0
